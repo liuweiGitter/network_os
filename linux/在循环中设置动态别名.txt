@@ -3,7 +3,7 @@
 设服务器上安装了多个tomcat，为方便管理，为每一个tomcat设置安装目录、日志目录、脚本目录的别名
 别名以tomcat端口号后两位结尾
 
-2.脚本实现(局部)：
+2.脚本实现(局部，用户bashrc或同等功能文件)：
 	export TOMCAT_SET_HOME='/opentnms/tomcat/'
 	tomcat_homes[0]='place holder'
 	tomcat_homes[1]=${TOMCAT_SET_HOME}tomcat18081
