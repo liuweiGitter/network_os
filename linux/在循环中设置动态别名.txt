@@ -1,0 +1,33 @@
+
+1.背景：
+设服务器上安装了多个tomcat，为方便管理，为每一个tomcat设置安装目录、日志目录、脚本目录的别名
+别名以tomcat端口号后两位结尾
+
+2.脚本实现(局部)：
+	export TOMCAT_SET_HOME='/opentnms/tomcat/'
+	tomcat_homes[0]='place holder'
+	tomcat_homes[1]=${TOMCAT_SET_HOME}tomcat18081
+	tomcat_homes[2]=${TOMCAT_SET_HOME}tomcat18082
+	tomcat_homes[3]=${TOMCAT_SET_HOME}tomcat18083
+	tomcat_homes[4]='place holder'
+	tomcat_homes[5]=${TOMCAT_SET_HOME}tomcat18085
+	tomcat_homes[6]=${TOMCAT_SET_HOME}tomcat18086
+
+	rm tmp_liuwei >/dev/null 2>&1
+	touch tmp_liuwei
+	echo "#!/bin/bash" >> tmp_liuwei
+	for((i=1;i<${#tomcat_homes[@]};i++))
+	do
+	  if [ "${tomcat_homes[i]}" = "place holder" ] ; then
+		continue;
+	  fi
+	  #循环中定义的别名需要在别名体中引用变量，但别名体中的变量只会在解释别名时才生效
+	  #别名命名时引用的变量则可以解释
+	  #以别名alias cat8${i}='cd ${tomcat_homes[i]} && pwd'为例，解释时是找不到第2个i这个局部变量的，故而会报错
+	  #正确的做法如下，首先输出需要定义的别名为普通字符串到脚本文件，然后读取脚本文件即可
+	  #小结：别名体中无法引用局部变量，需通过读取脚本文件间接定义别名
+	  echo "alias cat8"${i}"='cd "${tomcat_homes[i]}" && pwd'" >> tmp_liuwei
+	  echo "alias log8"${i}"='cd "${tomcat_homes[i]}"/logs && pwd'" >> tmp_liuwei
+	  echo "alias bin8"${i}"='cd "${tomcat_homes[i]}"/bin && pwd'" >> tmp_liuwei
+	done
+	. ./tmp_liuwei
